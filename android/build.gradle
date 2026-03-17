@@ -1,0 +1,66 @@
+buildscript {
+    ext.InterceptionWebView = [
+        buildToolsVersion: "36.0.0",
+        minSdkVersion: 24,
+        compileSdkVersion: 36,
+        targetSdkVersion: 36,
+        kotlinVersion: "2.1.20"
+    ]
+
+    ext.getExtOrDefault = { prop ->
+        if (rootProject.ext.has(prop)) {
+            return rootProject.ext.get(prop)
+        }
+
+        return InterceptionWebView[prop]
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:9.0.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
+    }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "com.facebook.react"
+
+android {
+    namespace "com.interceptionwebview"
+    buildToolsVersion getExtOrDefault("buildToolsVersion")
+    compileSdkVersion getExtOrDefault("compileSdkVersion")
+
+    defaultConfig {
+        minSdkVersion getExtOrDefault("minSdkVersion")
+        targetSdkVersion getExtOrDefault("targetSdkVersion")
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    lint {
+        disable "GradleCompatible"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation "com.facebook.react:react-android"
+    implementation project(':react-native-webview')
+}

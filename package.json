@@ -1,0 +1,57 @@
+{
+    "name": "react-native-interception-webview",
+    "description": "Package that allows you to intercept web requests within the WebView component.",
+    "version": "1.0.0",
+    "license": "MIT",
+    "main": "source/index",
+    "types": "index.d.ts",
+    "keywords": [
+        "http-interception",
+        "network-interception",
+        "react-native-plugin",
+        "react-native-webview",
+        "react-native",
+        "request-interception",
+        "webview-block-request",
+        "webview-interception",
+        "webview-network",
+        "webview-request-filter",
+        "webview-request",
+        "webview"
+    ],
+    "author": {
+        "name": "Vlad Rozhnev",
+        "email": "rozhnev.vlad@gmail.com",
+        "url": "https://github.com/vladrozhnev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vladrozhnev/react-native-interception-webview.git"
+    },
+    "peerDependencies": {
+        "react": "*",
+        "react-native": "*",
+        "react-native-webview": "*"
+    },
+    "devDependencies": {
+        "@react-native/eslint-config": "0.84.1",
+        "@react-native/typescript-config": "0.84.1",
+        "@types/jest": "30.0.0",
+        "@types/react": "19.2.14",
+        "eslint": "8.56.0",
+        "jest": "30.3.0",
+        "prettier": "3.8.1",
+        "react": "19.2.3",
+        "react-native": "0.84.1",
+        "react-native-webview": "13.16.1",
+        "typescript": "5.9.3"
+    },
+    "codegenConfig": {
+        "name": "InterceptionWebView",
+        "type": "all",
+        "jsSrcsDir": "source",
+        "android": {
+            "javaPackageName": "com.interceptionwebview"
+        }
+    }
+}

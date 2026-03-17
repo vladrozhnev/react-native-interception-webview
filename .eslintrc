@@ -1,0 +1,14 @@
+{
+    "root": true,
+    "extends": "@react-native",
+    "rules": {
+        "sort-imports": [
+            "warn",
+            {
+                "ignoreCase": true,
+                "ignoreDeclarationSort": true,
+                "ignoreMemberSort": false
+            }
+        ]
+    }
+}
