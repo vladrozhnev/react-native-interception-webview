@@ -17,6 +17,13 @@ This package is a native extension of the community [react-native-webview](https
 yarn add react-native-webview react-native-interception-webview
 ```
 
+## Usage
+
+```tsx
+import { WebView } from 'react-native-interception-webview';
+```
+
+
 ## Documentation
 
 The WebView component in this package inherits all methods and properties from the WebView component from the community, except two: `nativeConfig` and `injectedJavaScriptBeforeContentLoadedForMainFrameOnly`.
@@ -93,6 +100,7 @@ const onInterceptRequest = (event) => {
 
 Property that specifies how much time is allocated for the `onShouldInterruptRequest` callback to complete.
 Since `onShouldInterruptRequest` blocks the WebView thread, a deadline must be set.
+Android only.
 The default value is `5000` (5 sec).
 
 ```typescript
@@ -113,7 +121,7 @@ return (
 
 Property that specifies a list of file extensions to ignore when calling `onShouldInterruptRequest` and `onInterceptRequest` callbacks.
 This helps prevent unnecessary interceptions, for example when loading images or CSS files.
-
+Android only.
 The default value is:
 
 ```
@@ -159,3 +167,4 @@ export default function App() {
     />
   );
 }
+```
