@@ -87,7 +87,7 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
                 val eventData = Utils.buildEventData(request, requestId)
                 dispatcher?.dispatchEvent(InterceptionEvent(surfaceId, view.id, eventData))
                 
-                if (!config.hasInterruptHandler) return null;
+                if (!config.hasInterruptHandler) return null
 
                 val lock = LockManager.createLock(requestId)
                 dispatcher?.dispatchEvent(InterruptionEvent(surfaceId, view.id, eventData))
