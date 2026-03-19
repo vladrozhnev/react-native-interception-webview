@@ -119,7 +119,7 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
 
     @ReactProp(name = "hasOnShouldInterruptRequestHandler")
     override fun setHasOnShouldInterruptRequestHandler(view: RNCWebViewWrapper, value: Boolean) {
-        view.getConfig().hasOnShouldInterruptRequestHandler = value ?: false
+        view.getConfig().hasOnShouldInterruptRequestHandler = value
     }
 
     @ReactProp(name = "skipInterceptionForFileExtensions")
