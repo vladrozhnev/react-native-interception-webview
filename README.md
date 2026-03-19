@@ -137,7 +137,7 @@ You can extend this list. It is also available for import as the `SKIP_INTERCEPT
 // but will be called for other web requests
 return (
   <WebView
-    source={{ uri: 'https://github.com' }}
+    source={{ uri: 'https://example.com' }}
     onShouldInterruptRequest={onShouldInterruptRequest}
     skipInterceptionForFileExtensions={['js', 'css']}
   />
