@@ -36,7 +36,10 @@ export type InterceptionEvent = NativeSyntheticEvent<{
   };
 }>;
 
-export type WebViewProps = Omit<CommunityWebViewProps, 'nativeConfig'> & {
+export type WebViewProps = Omit<
+  CommunityWebViewProps,
+  'nativeConfig' | 'injectedJavaScriptBeforeContentLoadedForMainFrameOnly'
+> & {
   ref?: Ref<WebViewMethods>;
   interruptionTimeout?: number;
   skipInterceptionForExtensions?: string[];
