@@ -74,9 +74,13 @@ const JAVA_SCRIPT = `
 
       window.XMLHttpRequest.prototype.open = function (method, url) {
         try {
-          this.__url = new URL(url, window.location.href).href;
+          this.__url = new URL(url).href;
         } catch (error) {
-          this.__url = url;
+          try {
+            this.__url = new URL(url, window.location.href).href;
+          } catch (error) {
+            this.__url = url;
+          }
         }
 
         this.__method = method;
