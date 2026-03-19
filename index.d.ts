@@ -38,9 +38,10 @@ export type InterceptionEvent = NativeSyntheticEvent<{
 
 export type WebViewProps = Omit<CommunityWebViewProps, 'nativeConfig'> & {
   ref?: Ref<WebViewMethods>;
-  interceptionTimeout?: number;
+  interruptionTimeout?: number;
   skipInterceptionForExtensions?: string[];
-  onShouldInterceptRequest?: (event: InterceptionEvent) => boolean | void;
+  onShouldInterruptRequest?: (event: InterceptionEvent) => boolean | void;
+  onInterceptRequest?: (event: InterceptionEvent) => void;
 };
 
 export const EXTENSIONS: string[];
