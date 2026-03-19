@@ -117,7 +117,7 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
     }
 
     @ReactProp(name = "hasInterruptHandler")
-    override fun setHasInterruptHandler(view: RNCWebViewWrapper, value: Boolean?) {
+    override fun setHasInterruptHandler(view: RNCWebViewWrapper, value: Boolean) {
         view.getConfig().hasInterruptHandler = value ?: false
     }
 
