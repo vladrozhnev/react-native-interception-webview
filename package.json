@@ -1,6 +1,6 @@
 {
     "name": "react-native-interception-webview",
-    "description": "Package that allows you to intercept web requests within the WebView component.",
+    "description": "Package that allows intercepting web requests inside the WebView component.",
     "version": "1.1.0",
     "license": "MIT",
     "main": "source/index",

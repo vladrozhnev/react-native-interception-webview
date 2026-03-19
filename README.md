@@ -1,6 +1,6 @@
 # React Native Interception WebView
 
-Package that allows you to intercept web requests within the WebView component.
+Package that allows intercepting web requests inside the WebView component.
 
 ## Compatibility
 
