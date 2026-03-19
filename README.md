@@ -118,7 +118,7 @@ return (
 
 ---
 
-### skipInterceptionForExtensions
+### skipInterceptionForFileExtensions
 
 Android only.
 Property that specifies a list of file extensions to ignore when calling `onShouldInterruptRequest` and `onInterceptRequest` callbacks.
@@ -129,7 +129,7 @@ The default value is:
 ['aac', 'avi', 'avif', 'bmp', 'css', 'eot', 'gif', 'heic', 'heif', 'ico', 'jpeg', 'jpg', 'js', 'm4a', 'm4v', 'mkv', 'mov', 'mp3', 'mp4', 'ogg', 'pdf', 'png', 'svg', 'tiff', 'ttf', 'wav', 'webm', 'webp', 'woff', 'woff2']
 ```
 
-You can extend this list. It is also available for import as the `EXTENSIONS` constant.
+You can extend this list. It is also available for import as the `SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS` constant.
 
 ```typescript
 // onShouldInterruptRequest will not be called
@@ -139,7 +139,7 @@ return (
   <WebView
     source={{ uri: 'https://github.com' }}
     onShouldInterruptRequest={onShouldInterruptRequest}
-    skipInterceptionForExtensions={['js', 'css']}
+    skipInterceptionForFileExtensions={['js', 'css']}
   />
 );
 ```

@@ -267,8 +267,8 @@ interface NativeProps extends ViewProps {
   paymentRequestEnabled?: boolean;
 
   interruptionTimeout?: Int32;
-  skipInterceptionForExtensions?: string[];
-  hasInterruptHandler?: boolean;
+  skipInterceptionForFileExtensions?: string[];
+  hasOnShouldInterruptRequestHandler?: boolean;
   onShouldInterruptRequest?: DirectEventHandler<
     Readonly<{
       url: string;

@@ -1,6 +1,6 @@
 /** @format */
 
-export const EXTENSIONS: string[] = [
+export const SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS: string[] = [
   'aac',
   'avi',
   'avif',

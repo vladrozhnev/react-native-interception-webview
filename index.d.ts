@@ -42,12 +42,12 @@ export type WebViewProps = Omit<
 > & {
   ref?: Ref<WebViewMethods>;
   interruptionTimeout?: number;
-  skipInterceptionForExtensions?: string[];
+  skipInterceptionForFileExtensions?: string[];
   onShouldInterruptRequest?: (event: InterceptionEvent) => boolean | void;
   onInterceptRequest?: (event: InterceptionEvent) => void;
 };
 
-export const EXTENSIONS: string[];
+export const SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS: string[];
 export const WebView: NamedExoticComponent<WebViewProps>;
 export default WebView;
 

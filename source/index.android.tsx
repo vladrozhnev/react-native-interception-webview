@@ -5,7 +5,7 @@ import { WebView as CommunityWebView } from 'react-native-webview';
 import type { ReactNode, Ref } from 'react';
 import type { WebViewNativeConfig } from 'react-native-webview/lib/WebViewTypes';
 
-import { EXTENSIONS } from './constants';
+import { SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS } from './constants';
 import InterceptionWebViewNativeComponent from './specs/InterceptionWebViewNativeComponent';
 import NativeInterceptionWebViewModule from './specs/NativeInterceptionWebViewModule';
 
@@ -13,7 +13,7 @@ export const WebView = memo<GlobalWebViewProps>(
   ({
     ref,
     interruptionTimeout = 5000,
-    skipInterceptionForExtensions = EXTENSIONS,
+    skipInterceptionForFileExtensions = SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS,
     onShouldInterruptRequest,
     onInterceptRequest,
     ...props
@@ -38,15 +38,15 @@ export const WebView = memo<GlobalWebViewProps>(
         component: InterceptionWebViewNativeComponent,
         props: {
           interruptionTimeout,
-          hasInterruptHandler: !!onShouldInterruptRequest,
-          skipInterceptionForExtensions,
+          hasOnShouldInterruptRequestHandler: !!onShouldInterruptRequest,
+          skipInterceptionForFileExtensions,
           onInterceptRequest: handleInterceptRequest,
           onShouldInterruptRequest: handleShouldInterruptRequest,
         },
       };
     }, [
       interruptionTimeout,
-      skipInterceptionForExtensions,
+      skipInterceptionForFileExtensions,
       onShouldInterruptRequest,
       handleInterceptRequest,
       handleShouldInterruptRequest,
