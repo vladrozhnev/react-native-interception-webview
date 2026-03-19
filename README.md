@@ -4,7 +4,7 @@ Package that allows you to intercept web requests within the WebView component.
 
 ## Compatibility
 
-- Platforms: **Android**, **iOS**
+- Platforms: **Android**, **iOS (Partial)**
 - Architecture: **New Architecture Only**
 - React: **19+**
 - React Native: **0.79+**
