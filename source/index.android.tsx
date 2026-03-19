@@ -52,7 +52,14 @@ export const WebView = memo<GlobalWebViewProps>(
       handleShouldInterruptRequest,
     ]);
 
-    return <CommunityWebView {...props} ref={ref as Ref<CommunityWebView>} nativeConfig={nativeConfig} />;
+    return (
+      <CommunityWebView
+        {...props}
+        ref={ref as Ref<CommunityWebView>}
+        injectedJavaScriptBeforeContentLoadedForMainFrameOnly={false}
+        nativeConfig={nativeConfig}
+      />
+    );
   },
 );
 
