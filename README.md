@@ -147,7 +147,6 @@ return (
 ## Quick Example
 
 ```tsx
-import React from 'react';
 import { WebView } from 'react-native-interception-webview';
 
 export default function App() {
