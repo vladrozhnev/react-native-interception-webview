@@ -1,6 +1,6 @@
 package com.interceptionwebview
 
-data class InterceptionConfig(
+data class Config(
     var timeout: Int = 5000,
     var hasInterruptHandler: Boolean = false,
     var skipExtensions: Set<String> = setOf(
