@@ -4,10 +4,10 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.RCTModernEventEmitter
 
-class InterceptionEvent(surfaceId: Int, viewTag: Int, private val eventData: WritableMap) : Event<InterceptionEvent>(surfaceId, viewTag) {
+class InterruptionEvent(surfaceId: Int, viewTag: Int, private val eventData: WritableMap) : Event<InterruptionEvent>(surfaceId, viewTag) {
 
     override fun getEventName(): String {
-        return "topInterceptRequest"
+        return "topShouldInterruptRequest"
     }
 
     override fun dispatchModern(rctEventEmitter: RCTModernEventEmitter) {

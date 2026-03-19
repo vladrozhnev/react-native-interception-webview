@@ -1,19 +1,14 @@
 # React Native Interception WebView
 
-![npm version](https://img.shields.io/npm/v/react-native-interception-webview?style=flat&labelColor=%23424242&color=%232196f3)
-![npm downloads](https://img.shields.io/npm/dm/react-native-interception-webview?style=flat&labelColor=%23424242&color=%232196f3)
-![npm license](https://img.shields.io/npm/l/react-native-interception-webview?style=flat&labelColor=%23424242&color=%232196f3)
-
-Package that allows you to intercept web requests within the WebView component.
-The current implementation supports only Android.
-On iOS, the community WebView is used, but it does not provide the ability to intercept web requests.
+Package that allows intercepting web requests inside the WebView component.
 
 ## Compatibility
 
-- Platform: **Android**
+- Platforms: **Android**, **iOS (Partial)**
 - Architecture: **New Architecture Only**
 - React: **19+**
 - React Native: **0.79+**
+- React Native WebView: **13+**
 
 ## Installation
 
@@ -23,24 +18,32 @@ This package is a native extension of the community [react-native-webview](https
 yarn add react-native-webview react-native-interception-webview
 ```
 
+## Usage
+
+```tsx
+import { WebView } from 'react-native-interception-webview';
+```
+
+
 ## Documentation
 
-The `WebView` component in this package inherits all methods and properties from the community WebView component.
+The WebView component in this package inherits all methods and properties from the WebView component from the community, except two: `nativeConfig` and `injectedJavaScriptBeforeContentLoadedForMainFrameOnly`.
 The full list can be found [here](https://github.com/react-native-webview/react-native-webview/blob/master/docs/Reference.md).
 
 ---
 
-### onShouldInterceptRequest
+### onShouldInterruptRequest 
 
+Android only.
 Function that is called when the WebView intercepts a web request.
 It is invoked using a SyntheticEvent, which wraps a NativeEvent.
-This callback can return a boolean value.
-If it returns `true` or nothing, the web request will continue loading; if it returns `false`, the web request will be interrupted.
+This callback may return a boolean value.
+If it returns `false` or nothing, the web request will continue loading; if it returns `true`, the web request will be interrupted.
 
-Note that this function **blocks the WebView thread**, so it must execute quickly.
+Note that this function **blocks the webview thread**, so it must execute quickly.
 
 ```typescript
-const onShouldInterceptRequest = (event) => {
+const onShouldInterruptRequest = (event) => {
   const {
     url,
     scheme,
@@ -55,57 +58,88 @@ const onShouldInterceptRequest = (event) => {
     isRedirect
   } = event.nativeEvent;
 
-  if (url === 'https://github.com') {
-    // Here we interrupt a web request to github.com
-    return false;
+  if (url === 'https://example.com') {
+    // Here we interrupt a web request to example.com
+    return true;
   }
 };
 ```
 
 ---
 
-### interceptionTimeout
+### onInterceptRequest
 
-Property that specifies how much time is allocated for the `onShouldInterceptRequest` callback to complete.
-Since `onShouldInterceptRequest` blocks the webview thread, a deadline must be set.
+Function that is called when the WebView intercepts a web request.
+It is invoked using a SyntheticEvent, which wraps a NativeEvent.
+For iOS, only Fetch/XHR requests are available.
+
+```typescript
+const onInterceptRequest = (event) => {
+  const {
+    url,
+    scheme,
+    host,
+    path,
+    fragment,
+    method,
+    requestId,
+    query,
+    headers,
+    isForMainFrame,
+    isRedirect
+  } = event.nativeEvent;
+
+  if (url === 'https://example.com') {
+    console.log(url);
+  }
+};
+```
+
+---
+
+### interruptionTimeout
+
+Android only.
+Property that specifies how much time is allocated for the `onShouldInterruptRequest` callback to complete.
+Since `onShouldInterruptRequest` blocks the webview thread, a deadline must be set.
 The default value is `5000` (5 sec).
 
 ```typescript
-// If onShouldInterceptRequest takes more than 1 sec to complete
-// then github.com will continue loading
+// If onShouldInterruptRequest takes more than 1 sec to complete
+// then example.com will continue loading
 return (
   <WebView
-    source={{ uri: 'https://github.com' }}
-    onShouldInterceptRequest={onShouldInterceptRequest}
-    interceptionTimeout={1000}
+    source={{ uri: 'https://example.com' }}
+    onShouldInterruptRequest={onShouldInterruptRequest}
+    interruptionTimeout={1000}
   />
 );
 ```
 
 ---
 
-### skipInterceptionForExtensions
+### skipInterceptionForFileExtensions
 
-Property that specifies a list of file extensions to ignore when calling the `onShouldInterceptRequest` callback.
+Android only.
+Property that specifies a list of file extensions to ignore when calling `onShouldInterruptRequest` and `onInterceptRequest` callbacks.
 This helps prevent unnecessary interceptions, for example when loading images or CSS files.
-
 The default value is:
 
 ```
 ['aac', 'avi', 'avif', 'bmp', 'css', 'eot', 'gif', 'heic', 'heif', 'ico', 'jpeg', 'jpg', 'js', 'm4a', 'm4v', 'mkv', 'mov', 'mp3', 'mp4', 'ogg', 'pdf', 'png', 'svg', 'tiff', 'ttf', 'wav', 'webm', 'webp', 'woff', 'woff2']
 ```
 
-You can extend this list. It is also available for import as the `EXTENSIONS` constant.
+You can extend this list. It is also available for import as the `SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS` constant.
 
 ```typescript
-// onShouldInterceptRequest will not be called
-// when JavaScript or CSS files are loaded
+// onShouldInterruptRequest will not be called
+// when JavaScript or CSS files are loading
 // but will be called for other web requests
 return (
   <WebView
     source={{ uri: 'https://github.com' }}
-    onShouldInterceptRequest={onShouldInterceptRequest}
-    skipInterceptionForExtensions={['js', 'css']}
+    onShouldInterruptRequest={onShouldInterruptRequest}
+    skipInterceptionForFileExtensions={['js', 'css']}
   />
 );
 ```
@@ -113,24 +147,30 @@ return (
 ## Quick Example
 
 ```tsx
-import React from 'react';
 import { WebView } from 'react-native-interception-webview';
 
 export default function App() {
-  const onShouldInterceptRequest = (event) => {
-    const { url } = event.nativeEvent;
+  const onShouldInterruptRequest = (event) => {
+    const { url, query } = event.nativeEvent;
 
-    if (url.includes('github')) {
-      console.log('Blocking GitHub request');
-      return false;
+    if (url.includes('ad')) {
+      console.log('Ad blocking');
+      return true;
     }
   };
 
+  const onInterceptRequest = (event) => {
+    const { url } = event.nativeEvent;
+    console.log('Log', url);
+  }
+
   return (
     <WebView
-      source={{ uri: 'https://github.com' }}
-      onShouldInterceptRequest={onShouldInterceptRequest}
-      interceptionTimeout={1000}
+      source={{ uri: 'https://example.com' }}
+      onShouldInterruptRequest={onShouldInterruptRequest}
+      onInterceptRequest={onInterceptRequest}
+      interruptionTimeout={1000}
     />
   );
 }
+```

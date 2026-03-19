@@ -36,14 +36,18 @@ export type InterceptionEvent = NativeSyntheticEvent<{
   };
 }>;
 
-export type WebViewProps = Omit<CommunityWebViewProps, 'nativeConfig'> & {
+export type WebViewProps = Omit<
+  CommunityWebViewProps,
+  'nativeConfig' | 'injectedJavaScriptBeforeContentLoadedForMainFrameOnly'
+> & {
   ref?: Ref<WebViewMethods>;
-  interceptionTimeout?: number;
-  skipInterceptionForExtensions?: string[];
-  onShouldInterceptRequest?: (event: InterceptionEvent) => boolean | void;
+  interruptionTimeout?: number;
+  skipInterceptionForFileExtensions?: string[];
+  onShouldInterruptRequest?: (event: InterceptionEvent) => boolean | void;
+  onInterceptRequest?: (event: InterceptionEvent) => void;
 };
 
-export const EXTENSIONS: string[];
+export const SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS: string[];
 export const WebView: NamedExoticComponent<WebViewProps>;
 export default WebView;
 

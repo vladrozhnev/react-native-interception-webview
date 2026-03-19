@@ -1,22 +1,17 @@
 {
     "name": "react-native-interception-webview",
-    "description": "Package that allows you to intercept web requests within the WebView component.",
-    "version": "1.0.0",
+    "description": "Package that allows intercepting web requests inside the WebView component.",
+    "version": "1.1.0",
     "license": "MIT",
     "main": "source/index",
     "types": "index.d.ts",
     "keywords": [
-        "http-interception",
-        "network-interception",
-        "react-native-plugin",
+        "interception",
+        "network",
+        "proxy",
         "react-native-webview",
         "react-native",
-        "request-interception",
-        "webview-block-request",
-        "webview-interception",
-        "webview-network",
-        "webview-request-filter",
-        "webview-request",
+        "request",
         "webview"
     ],
     "author": {
@@ -28,24 +23,13 @@
         "type": "git",
         "url": "git+https://github.com/vladrozhnev/react-native-interception-webview.git"
     },
-    "peerDependencies": {
-        "react": "*",
-        "react-native": "*",
-        "react-native-webview": "*"
-    },
-    "devDependencies": {
-        "@react-native/eslint-config": "0.84.1",
-        "@react-native/typescript-config": "0.84.1",
-        "@types/jest": "30.0.0",
-        "@types/react": "19.2.14",
-        "eslint": "8.56.0",
-        "jest": "30.3.0",
-        "prettier": "3.8.1",
-        "react": "19.2.3",
-        "react-native": "0.84.1",
-        "react-native-webview": "13.16.1",
-        "typescript": "5.9.3"
-    },
+    "files": [
+        "android/",
+        "source/",
+        "index.d.ts",
+        "README.md",
+        "LICENSE"
+    ],
     "codegenConfig": {
         "name": "InterceptionWebView",
         "type": "all",
@@ -53,5 +37,23 @@
         "android": {
             "javaPackageName": "com.interceptionwebview"
         }
+    },
+    "peerDependencies": {
+        "react": ">=19.0.0",
+        "react-native": ">=0.79.0",
+        "react-native-webview": ">=13.0.0"
+    },
+    "devDependencies": {
+        "@react-native/eslint-config": "0.84.1",
+        "@react-native/typescript-config": "0.84.1",
+        "@types/jest": "30.0.0",
+        "@types/react": "19.2.14",
+        "eslint": "8.57.1",
+        "jest": "30.3.0",
+        "prettier": "3.8.1",
+        "react": "19.2.3",
+        "react-native": "0.84.1",
+        "react-native-webview": "13.16.1",
+        "typescript": "5.9.3"
     }
 }

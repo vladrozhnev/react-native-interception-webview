@@ -30,8 +30,8 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
 
     private val mDelegate: ViewManagerDelegate<RNCWebViewWrapper>
 
-    private fun RNCWebViewWrapper.getConfig(): InterceptionConfig {
-        return getTag(INTERCEPTION_CONFIG_TAG) as InterceptionConfig
+    private fun RNCWebViewWrapper.getConfig(): Config {
+        return getTag(INTERCEPTION_CONFIG_TAG) as Config
     }
 
     init {
@@ -48,13 +48,14 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
 
     override fun createViewInstance(reactContext: ThemedReactContext): RNCWebViewWrapper {
         val view = super.createViewInstance(reactContext)
-        view.setTag(INTERCEPTION_CONFIG_TAG, InterceptionConfig())
+        view.setTag(INTERCEPTION_CONFIG_TAG, Config())
         return view
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map = super.getExportedCustomDirectEventTypeConstants() ?: mutableMapOf()
-        map["topShouldInterceptRequest"] = mapOf("registrationName" to "onShouldInterceptRequest")
+        map["topShouldInterruptRequest"] = mapOf("registrationName" to "onShouldInterruptRequest")
+        map["topInterceptRequest"] = mapOf("registrationName" to "onInterceptRequest")
         return map
     }
 
@@ -74,23 +75,27 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
                 if (shouldSkipByScheme) return null
 
                 val path = Uri.decode(uri.path.orEmpty().lowercase())
-                val shouldSkipByPath = config.skipExtensions.any { path.endsWith(".$it") }
+                val shouldSkipByPath = config.skipInterceptionForFileExtensions.any { path.endsWith(".$it") }
                 if (shouldSkipByPath) return null
 
                 val query = Uri.decode(uri.query.orEmpty().lowercase())
-                val regex = Regex("\\.(${config.skipExtensions.joinToString("|")})($|[?&/=,])")
+                val regex = Regex("\\.(${config.skipInterceptionForFileExtensions.joinToString("|")})($|[?&/=,])")
                 val shouldSkipByQuery = regex.containsMatchIn(query)
                 if (shouldSkipByQuery) return null
 
                 val requestId = UUID.randomUUID().toString()
-                val lock = InterceptionLockManager.createLock(requestId)
-                val eventData = InterceptionUtils.buildEventData(request, requestId)
+                val interceptionEventData = Utils.buildEventData(request, requestId)
+                dispatcher?.dispatchEvent(InterceptionEvent(surfaceId, view.id, interceptionEventData))
+                
+                if (!config.hasOnShouldInterruptRequestHandler) return null
 
-                dispatcher?.dispatchEvent(InterceptionEvent(surfaceId, view.id, eventData))
+                val lock = LockManager.createLock(requestId)
+                val interuptionEventData = Utils.buildEventData(request, requestId)
+                dispatcher?.dispatchEvent(InterruptionEvent(surfaceId, view.id, interuptionEventData))
                 lock.lock.lock()
 
                 try {
-                    val endTime = System.currentTimeMillis() + config.timeout
+                    val endTime = System.currentTimeMillis() + config.interruptionTimeout
                     while (!lock.decided.get()) {
                         val remaining = endTime - System.currentTimeMillis()
                         if (remaining <= 0) break
@@ -101,19 +106,24 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
                 }
 
                 val allowed = if (lock.decided.get()) lock.allowed.get() else true
-                InterceptionLockManager.removeLock(requestId)
+                LockManager.removeLock(requestId)
                 return if (allowed) null else WebResourceResponse("text/plain", "UTF-8", null)
             }
         }
     }
 
-    @ReactProp(name = "interceptionTimeout")
-    override fun setInterceptionTimeout(view: RNCWebViewWrapper, timeout: Int) {
-        view.getConfig().timeout = timeout.coerceIn(0, 60000)
+    @ReactProp(name = "interruptionTimeout")
+    override fun setInterruptionTimeout(view: RNCWebViewWrapper, timeout: Int) {
+        view.getConfig().interruptionTimeout = timeout.coerceIn(0, 60000)
     }
 
-    @ReactProp(name = "skipInterceptionForExtensions")
-    override fun setSkipInterceptionForExtensions(view: RNCWebViewWrapper, extensions: ReadableArray?) {
+    @ReactProp(name = "hasOnShouldInterruptRequestHandler")
+    override fun setHasOnShouldInterruptRequestHandler(view: RNCWebViewWrapper, value: Boolean) {
+        view.getConfig().hasOnShouldInterruptRequestHandler = value
+    }
+
+    @ReactProp(name = "skipInterceptionForFileExtensions")
+    override fun setSkipInterceptionForFileExtensions(view: RNCWebViewWrapper, extensions: ReadableArray?) {
         val set = mutableSetOf<String>()
 
         extensions?.let {
@@ -126,6 +136,6 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
             }
         }
 
-        view.getConfig().skipExtensions = set
+        view.getConfig().skipInterceptionForFileExtensions = set
     }
 }

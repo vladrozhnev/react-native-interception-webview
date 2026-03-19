@@ -266,9 +266,28 @@ interface NativeProps extends ViewProps {
   injectedJavaScriptObject?: string;
   paymentRequestEnabled?: boolean;
 
-  interceptionTimeout?: Int32;
-  skipInterceptionForExtensions?: string[];
-  onShouldInterceptRequest?: DirectEventHandler<
+  interruptionTimeout?: Int32;
+  skipInterceptionForFileExtensions?: string[];
+  hasOnShouldInterruptRequestHandler?: boolean;
+  onShouldInterruptRequest?: DirectEventHandler<
+    Readonly<{
+      url: string;
+      scheme: string;
+      host: string;
+      path: string;
+      fragment: string;
+      method: string;
+      requestId: string;
+      isForMainFrame: boolean;
+      isRedirect: boolean;
+      headers: Readonly<{}>;
+      query: Readonly<{
+        raw: string;
+        params: Readonly<{}>;
+      }>;
+    }>
+  >;
+  onInterceptRequest?: DirectEventHandler<
     Readonly<{
       url: string;
       scheme: string;
