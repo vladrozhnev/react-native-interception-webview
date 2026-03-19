@@ -13,6 +13,6 @@ class InterceptionWebViewModule(reactContext: ReactApplicationContext) : NativeI
 
     @ReactMethod
     override fun setRequestAllowed(requestId: String, allowed: Boolean?) {
-        InterceptionLockManager.setAllowed(requestId, allowed ?: true)
+        LockManager.setAllowed(requestId, allowed ?: true)
     }
 }
