@@ -30,8 +30,8 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
 
     private val mDelegate: ViewManagerDelegate<RNCWebViewWrapper>
 
-    private fun RNCWebViewWrapper.getConfig(): Config {
-        return getTag(INTERCEPTION_CONFIG_TAG) as Config
+    private fun RNCWebViewWrapper.getConfig(): InterceptionConfig {
+        return getTag(INTERCEPTION_CONFIG_TAG) as InterceptionConfig
     }
 
     init {
@@ -48,7 +48,7 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
 
     override fun createViewInstance(reactContext: ThemedReactContext): RNCWebViewWrapper {
         val view = super.createViewInstance(reactContext)
-        view.setTag(INTERCEPTION_CONFIG_TAG, Config())
+        view.setTag(INTERCEPTION_CONFIG_TAG, InterceptionConfig())
         return view
     }
 
@@ -84,12 +84,12 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
                 if (shouldSkipByQuery) return null
 
                 val requestId = UUID.randomUUID().toString()
-                val eventData = Utils.buildEventData(request, requestId)
+                val eventData = InterceptionUtils.buildEventData(request, requestId)
                 dispatcher?.dispatchEvent(InterceptionEvent(surfaceId, view.id, eventData))
                 
                 if (!config.hasInterruptHandler) return null
 
-                val lock = LockManager.createLock(requestId)
+                val lock = InterruptionLockManager.createLock(requestId)
                 dispatcher?.dispatchEvent(InterruptionEvent(surfaceId, view.id, eventData))
                 lock.lock.lock()
 
@@ -105,7 +105,7 @@ InterceptionWebViewManagerInterface<RNCWebViewWrapper> {
                 }
 
                 val allowed = if (lock.decided.get()) lock.allowed.get() else true
-                LockManager.removeLock(requestId)
+                InterruptionLockManager.removeLock(requestId)
                 return if (allowed) null else WebResourceResponse("text/plain", "UTF-8", null)
             }
         }

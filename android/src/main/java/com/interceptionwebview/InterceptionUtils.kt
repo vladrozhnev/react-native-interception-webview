@@ -5,7 +5,7 @@ import android.webkit.WebResourceRequest
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 
-object Utils {
+object InterceptionUtils {
 
     fun buildEventData(request: WebResourceRequest, requestId: String): WritableMap {
         val uri = request.url

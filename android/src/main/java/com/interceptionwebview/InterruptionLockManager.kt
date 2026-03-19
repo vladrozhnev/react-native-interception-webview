@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.ReentrantLock
 
-object LockManager {
+object InterruptionLockManager {
 
     data class Lock(
         val allowed: AtomicBoolean = AtomicBoolean(false),
