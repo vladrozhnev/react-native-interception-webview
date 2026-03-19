@@ -58,8 +58,8 @@ const onShouldInterruptRequest = (event) => {
     isRedirect
   } = event.nativeEvent;
 
-  if (url === 'https://github.com') {
-    // Here we interrupt a web request to github.com
+  if (url === 'https://example.com') {
+    // Here we interrupt a web request to example.com
     return true;
   }
 };
