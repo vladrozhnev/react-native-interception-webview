@@ -22,7 +22,8 @@ export const WebView = memo<GlobalWebViewProps>(
   }): ReactNode => {
     const handleInterceptRequest = useCallback(
       (event: NativeSyntheticEvent<GlobalInterceptionEvent>): void => {
-        onInterceptRequest?.(event.nativeEvent);
+        const data = getFilteredInterceptionEventData(event);
+        onInterceptRequest?.(data);
       },
       [onInterceptRequest],
     );
@@ -31,7 +32,6 @@ export const WebView = memo<GlobalWebViewProps>(
       (event: NativeSyntheticEvent<GlobalInterceptionEvent>): void => {
         const data = getFilteredInterceptionEventData(event);
         const interrupt = !!onShouldInterruptRequest?.(data);
-
         NativeInterceptionWebViewModule.setRequestAllowed(data.requestId, !interrupt);
       },
       [onShouldInterruptRequest],
