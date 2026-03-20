@@ -6,6 +6,7 @@ import type { NativeSyntheticEvent } from 'react-native';
 import type { ReactNode, Ref } from 'react';
 import type { WebViewNativeConfig } from 'react-native-webview/lib/WebViewTypes';
 
+import { getFilteredInterceptionEventData } from './utils';
 import { SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS } from './constants';
 import InterceptionWebViewNativeComponent from './specs/InterceptionWebViewNativeComponent';
 import NativeInterceptionWebViewModule from './specs/NativeInterceptionWebViewModule';
@@ -28,8 +29,10 @@ export const WebView = memo<GlobalWebViewProps>(
 
     const handleShouldInterruptRequest = useCallback(
       (event: NativeSyntheticEvent<GlobalInterceptionEvent>): void => {
-        const interrupt = !!onShouldInterruptRequest?.(event.nativeEvent);
-        NativeInterceptionWebViewModule.setRequestAllowed(event.nativeEvent.requestId, !interrupt);
+        const data = getFilteredInterceptionEventData(event);
+        const interrupt = !!onShouldInterruptRequest?.(data);
+
+        NativeInterceptionWebViewModule.setRequestAllowed(data.requestId, !interrupt);
       },
       [onShouldInterruptRequest],
     );

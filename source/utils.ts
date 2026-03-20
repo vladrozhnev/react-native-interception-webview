@@ -1,11 +1,20 @@
 /** @format */
 
+import type { NativeSyntheticEvent } from 'react-native';
+
 export const makeId = (): string => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char: string): string => {
     const randomHex = (Math.random() * 16) | 0;
     const value = char === 'x' ? randomHex : (randomHex & 0x3) | 0x8;
     return value.toString(16);
   });
+};
+
+export const getFilteredInterceptionEventData = (
+  event: NativeSyntheticEvent<GlobalInterceptionEvent>,
+): GlobalInterceptionEvent => {
+  const { url, scheme, host, path, fragment, method, requestId, query } = event.nativeEvent;
+  return { url, scheme, host, path, fragment, method, requestId, query };
 };
 
 export const getInterceptionEventData = (url: string): GlobalInterceptionEvent => {
