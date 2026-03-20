@@ -2,9 +2,11 @@
 
 import { memo, useCallback, useMemo } from 'react';
 import { WebView as CommunityWebView } from 'react-native-webview';
+import type { NativeSyntheticEvent } from 'react-native';
 import type { ReactNode, Ref } from 'react';
 import type { WebViewNativeConfig } from 'react-native-webview/lib/WebViewTypes';
 
+import { getFilteredInterceptionEventData } from './utils';
 import { SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS } from './constants';
 import InterceptionWebViewNativeComponent from './specs/InterceptionWebViewNativeComponent';
 import NativeInterceptionWebViewModule from './specs/NativeInterceptionWebViewModule';
@@ -19,16 +21,18 @@ export const WebView = memo<GlobalWebViewProps>(
     ...props
   }): ReactNode => {
     const handleInterceptRequest = useCallback(
-      (event: GlobalInterceptionEvent): void => {
-        onInterceptRequest?.(event);
+      (event: NativeSyntheticEvent<GlobalInterceptionEvent>): void => {
+        const data = getFilteredInterceptionEventData(event);
+        onInterceptRequest?.(data);
       },
       [onInterceptRequest],
     );
 
     const handleShouldInterruptRequest = useCallback(
-      (event: GlobalInterceptionEvent): void => {
-        const interrupt = !!onShouldInterruptRequest?.(event);
-        NativeInterceptionWebViewModule.setRequestAllowed(event.nativeEvent.requestId, !interrupt);
+      (event: NativeSyntheticEvent<GlobalInterceptionEvent>): void => {
+        const data = getFilteredInterceptionEventData(event);
+        const interrupt = !!onShouldInterruptRequest?.(data);
+        NativeInterceptionWebViewModule.setRequestAllowed(data.requestId, !interrupt);
       },
       [onShouldInterruptRequest],
     );

@@ -276,15 +276,9 @@ interface NativeProps extends ViewProps {
       host: string;
       path: string;
       fragment: string;
+      query: string;
       method: string;
       requestId: string;
-      isForMainFrame: boolean;
-      isRedirect: boolean;
-      headers: Readonly<{}>;
-      query: Readonly<{
-        raw: string;
-        params: Readonly<{}>;
-      }>;
     }>
   >;
   onInterceptRequest?: DirectEventHandler<
@@ -294,15 +288,9 @@ interface NativeProps extends ViewProps {
       host: string;
       path: string;
       fragment: string;
+      query: string;
       method: string;
       requestId: string;
-      isForMainFrame: boolean;
-      isRedirect: boolean;
-      headers: Readonly<{}>;
-      query: Readonly<{
-        raw: string;
-        params: Readonly<{}>;
-      }>;
     }>
   >;
 }

@@ -36,7 +36,6 @@ The full list can be found [here](https://github.com/react-native-webview/react-
 
 Android only.
 Function that is called when the WebView intercepts a web request.
-It is invoked using a SyntheticEvent, which wraps a NativeEvent.
 This callback may return a boolean value.
 If it returns `false` or nothing, the web request will continue loading; if it returns `true`, the web request will be interrupted.
 
@@ -50,13 +49,10 @@ const onShouldInterruptRequest = (event) => {
     host,
     path,
     fragment,
-    method,
-    requestId,
     query,
-    headers,
-    isForMainFrame,
-    isRedirect
-  } = event.nativeEvent;
+    method,
+    requestId
+  } = event;
 
   if (url === 'https://example.com') {
     // Here we interrupt a web request to example.com
@@ -70,8 +66,6 @@ const onShouldInterruptRequest = (event) => {
 ### onInterceptRequest
 
 Function that is called when the WebView intercepts a web request.
-It is invoked using a SyntheticEvent, which wraps a NativeEvent.
-For iOS, only Fetch/XHR requests are available.
 
 ```typescript
 const onInterceptRequest = (event) => {
@@ -81,13 +75,10 @@ const onInterceptRequest = (event) => {
     host,
     path,
     fragment,
+    query,
     method,
     requestId,
-    query,
-    headers,
-    isForMainFrame,
-    isRedirect
-  } = event.nativeEvent;
+  } = event;
 
   if (url === 'https://example.com') {
     console.log(url);
@@ -120,7 +111,6 @@ return (
 
 ### skipInterceptionForFileExtensions
 
-Android only.
 Property that specifies a list of file extensions to ignore when calling `onShouldInterruptRequest` and `onInterceptRequest` callbacks.
 This helps prevent unnecessary interceptions, for example when loading images or CSS files.
 The default value is:
@@ -132,14 +122,14 @@ The default value is:
 You can extend this list. It is also available for import as the `SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS` constant.
 
 ```typescript
-// onShouldInterruptRequest will not be called
-// when JavaScript or CSS files are loading
-// but will be called for other web requests
+// onShouldInterruptRequest and onInterceptRequest will not be called
+// when JavaScript or CSS files are loading but will be called for other web requests
 return (
   <WebView
     source={{ uri: 'https://example.com' }}
-    onShouldInterruptRequest={onShouldInterruptRequest}
     skipInterceptionForFileExtensions={['js', 'css']}
+    onShouldInterruptRequest={onShouldInterruptRequest}
+    onInterceptRequest={onInterceptRequest}
   />
 );
 ```
@@ -151,7 +141,7 @@ import { WebView } from 'react-native-interception-webview';
 
 export default function App() {
   const onShouldInterruptRequest = (event) => {
-    const { url, query } = event.nativeEvent;
+    const { url } = event;
 
     if (url.includes('ad')) {
       console.log('Ad blocking');
@@ -160,7 +150,7 @@ export default function App() {
   };
 
   const onInterceptRequest = (event) => {
-    const { url } = event.nativeEvent;
+    const { url } = event;
     console.log('Log', url);
   }
 

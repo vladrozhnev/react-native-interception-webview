@@ -2,6 +2,7 @@
     "root": true,
     "extends": "@react-native",
     "rules": {
+        "no-bitwise": "off",
         "sort-imports": [
             "warn",
             {
