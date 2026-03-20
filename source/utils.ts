@@ -28,10 +28,7 @@ export const getInterceptionEventData = (url: string): GlobalInterceptionEvent =
     fragment: data.hash,
     method: 'GET',
     requestId: makeId(),
-    query: {
-      raw: data.search,
-      params: Object.fromEntries(data.searchParams),
-    },
+    query: data.search,
   };
 };
 

@@ -22,12 +22,7 @@ export type InterceptionEvent = {
   fragment: string;
   method: string;
   requestId: string;
-  query: {
-    raw: string;
-    params: {
-      [key: string]: string | string[] | undefined;
-    };
-  };
+  query: string;
 };
 
 export type WebViewProps = Omit<

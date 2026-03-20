@@ -278,10 +278,7 @@ interface NativeProps extends ViewProps {
       fragment: string;
       method: string;
       requestId: string;
-      query: Readonly<{
-        raw: string;
-        params: Readonly<{}>;
-      }>;
+      query: string;
     }>
   >;
   onInterceptRequest?: DirectEventHandler<
@@ -293,10 +290,7 @@ interface NativeProps extends ViewProps {
       fragment: string;
       method: string;
       requestId: string;
-      query: Readonly<{
-        raw: string;
-        params: Readonly<{}>;
-      }>;
+      query: string;
     }>
   >;
 }

@@ -14,8 +14,9 @@ object Utils {
         val host = uri.host.orEmpty().lowercase()
         val path = Uri.decode(uri.path.orEmpty())
         val fragment = Uri.decode(uri.fragment.orEmpty())
+        val query = Uri.decode(uri.query.orEmpty())
 
-        val eventData = Arguments.createMap().apply {
+        return Arguments.createMap().apply {
             putString("url", url)
             putString("scheme", scheme)
             putString("host", host)
@@ -23,29 +24,7 @@ object Utils {
             putString("fragment", fragment)
             putString("method", request.method.uppercase())
             putString("requestId", requestId)
-
-            val query = Arguments.createMap().apply {
-                val raw = Uri.decode(uri.query.orEmpty())
-                val params = Arguments.createMap().apply {
-                    uri.queryParameterNames.forEach { key ->
-                        val values = uri.getQueryParameters(key)
-                        if (values.size == 1) {
-                            putString(key, values[0])
-                        } else if (values.isNotEmpty()) {
-                            val array = Arguments.createArray()
-                            values.forEach { array.pushString(it) }
-                            putArray(key, array)
-                        }
-                    }
-                }
-
-                putString("raw", raw)
-                putMap("params", params)
-            }
-
-            putMap("query", query)
+            putString("query", query)
         }
-
-        return eventData
     }
 }
