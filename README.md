@@ -50,10 +50,8 @@ const onShouldInterruptRequest = (event) => {
     host,
     path,
     fragment,
-    method,
     requestId,
-    query,
-    isForMainFrame
+    query
   } = event.nativeEvent;
 
   if (url === 'https://example.com') {
@@ -79,10 +77,8 @@ const onInterceptRequest = (event) => {
     host,
     path,
     fragment,
-    method,
     requestId,
-    query,
-    isForMainFrame
+    query
   } = event.nativeEvent;
 
   if (url === 'https://example.com') {
