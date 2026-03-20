@@ -36,7 +36,6 @@ The full list can be found [here](https://github.com/react-native-webview/react-
 
 Android only.
 Function that is called when the WebView intercepts a web request.
-It is invoked using a SyntheticEvent, which wraps a NativeEvent.
 This callback may return a boolean value.
 If it returns `false` or nothing, the web request will continue loading; if it returns `true`, the web request will be interrupted.
 
@@ -52,7 +51,7 @@ const onShouldInterruptRequest = (event) => {
     fragment,
     requestId,
     query
-  } = event.nativeEvent;
+  } = event;
 
   if (url === 'https://example.com') {
     // Here we interrupt a web request to example.com
@@ -66,8 +65,6 @@ const onShouldInterruptRequest = (event) => {
 ### onInterceptRequest
 
 Function that is called when the WebView intercepts a web request.
-It is invoked using a SyntheticEvent, which wraps a NativeEvent.
-For iOS, only Fetch/XHR requests are available.
 
 ```typescript
 const onInterceptRequest = (event) => {
@@ -79,7 +76,7 @@ const onInterceptRequest = (event) => {
     fragment,
     requestId,
     query
-  } = event.nativeEvent;
+  } = event;
 
   if (url === 'https://example.com') {
     console.log(url);
@@ -142,7 +139,7 @@ import { WebView } from 'react-native-interception-webview';
 
 export default function App() {
   const onShouldInterruptRequest = (event) => {
-    const { url, query } = event.nativeEvent;
+    const { url, query } = event;
 
     if (url.includes('ad')) {
       console.log('Ad blocking');
@@ -151,7 +148,7 @@ export default function App() {
   };
 
   const onInterceptRequest = (event) => {
-    const { url } = event.nativeEvent;
+    const { url } = event;
     console.log('Log', url);
   }
 
