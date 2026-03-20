@@ -49,8 +49,8 @@ const onShouldInterruptRequest = (event) => {
     host,
     path,
     fragment,
-    method,
     query,
+    method,
     requestId
   } = event;
 
@@ -75,8 +75,8 @@ const onInterceptRequest = (event) => {
     host,
     path,
     fragment,
-    method,
     query,
+    method,
     requestId,
   } = event;
 
@@ -122,14 +122,14 @@ The default value is:
 You can extend this list. It is also available for import as the `SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS` constant.
 
 ```typescript
-// onShouldInterruptRequest will not be called
-// when JavaScript or CSS files are loading
-// but will be called for other web requests
+// onShouldInterruptRequest and onInterceptRequest will not be called
+// when JavaScript or CSS files are loading but will be called for other web requests
 return (
   <WebView
     source={{ uri: 'https://example.com' }}
-    onShouldInterruptRequest={onShouldInterruptRequest}
     skipInterceptionForFileExtensions={['js', 'css']}
+    onShouldInterruptRequest={onShouldInterruptRequest}
+    onInterceptRequest={onInterceptRequest}
   />
 );
 ```
@@ -141,7 +141,7 @@ import { WebView } from 'react-native-interception-webview';
 
 export default function App() {
   const onShouldInterruptRequest = (event) => {
-    const { url, query } = event;
+    const { url } = event;
 
     if (url.includes('ad')) {
       console.log('Ad blocking');
