@@ -276,9 +276,9 @@ interface NativeProps extends ViewProps {
       host: string;
       path: string;
       fragment: string;
+      query: string;
       method: string;
       requestId: string;
-      query: string;
     }>
   >;
   onInterceptRequest?: DirectEventHandler<
@@ -288,9 +288,9 @@ interface NativeProps extends ViewProps {
       host: string;
       path: string;
       fragment: string;
+      query: string;
       method: string;
       requestId: string;
-      query: string;
     }>
   >;
 }

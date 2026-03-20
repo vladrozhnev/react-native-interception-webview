@@ -20,9 +20,9 @@ export type InterceptionEvent = {
   host: string;
   path: string;
   fragment: string;
+  query: string;
   method: string;
   requestId: string;
-  query: string;
 };
 
 export type WebViewProps = Omit<
