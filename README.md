@@ -53,9 +53,7 @@ const onShouldInterruptRequest = (event) => {
     method,
     requestId,
     query,
-    headers,
-    isForMainFrame,
-    isRedirect
+    isForMainFrame
   } = event.nativeEvent;
 
   if (url === 'https://example.com') {
@@ -84,9 +82,7 @@ const onInterceptRequest = (event) => {
     method,
     requestId,
     query,
-    headers,
-    isForMainFrame,
-    isRedirect
+    isForMainFrame
   } = event.nativeEvent;
 
   if (url === 'https://example.com') {
@@ -120,7 +116,6 @@ return (
 
 ### skipInterceptionForFileExtensions
 
-Android only.
 Property that specifies a list of file extensions to ignore when calling `onShouldInterruptRequest` and `onInterceptRequest` callbacks.
 This helps prevent unnecessary interceptions, for example when loading images or CSS files.
 The default value is:

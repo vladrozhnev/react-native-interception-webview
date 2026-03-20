@@ -5,115 +5,75 @@ import { WebView as CommunityWebView } from 'react-native-webview';
 import type { ReactNode, Ref } from 'react';
 import type { WebViewMessageEvent } from 'react-native-webview';
 
-import { decodeURL } from './utils';
+import { SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS } from './constants';
 
-const JAVA_SCRIPT = `
-  (function () {
-    function postMessage(url, method, headers, requestId) {
-      try {
-        window.webkit.messageHandlers.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            url: url || '',
-            method: (method || 'GET').toUpperCase(),
-            headers: headers || {},
-            requestId: requestId,
-            isForMainFrame: window.self === window.top,
-          }),
-        );
-      } catch (error) {}
-    }
+const getJavaScript = (skipInterceptionForFileExtensions: string[]): string => {
+  return `
+    (function () {
+      function containsEncodedComponents(url) {
+        return decodeURI(url) !== decodeURIComponent(url);
+      }
 
-    function makeId() {
-      return String(Date.now()) + '-' + String(Math.random()).slice(2);
-    }
+      function decodeURL(url = '') {
+        const decodedURL = decodeURIComponent(url);
+        return containsEncodedComponents(decodedURL) ? decodeURL(decodedURL) : decodedURL;
+      }
 
-    if (window.__interceptionWebViewPatched) return;
-    window.__interceptionWebViewPatched = true;
-    const origFetch = window.fetch;
-    const origOpen = window.XMLHttpRequest.prototype.open;
-    const origSend = window.XMLHttpRequest.prototype.send;
-    const origSetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
+      function makeId() {
+        return Date.now().toString() + '-' + Math.random().toString().slice(2);
+      }
 
-    try {
-      window.fetch = function (input, init) {
+      function postMessage(url) {
         try {
-          let url = '';
-          let method = 'GET';
-          let headers = {};
-          let requestId = makeId();
-
-          if (typeof input === 'string') {
-            url = input;
-          } else if (input && input.url) {
-            url = input.url;
-          }
-
-          if (init?.method) {
-            method = init.method;
-          } else if (input?.method) {
-            method = input.method;
-          }
-
-          if (init?.headers) {
-            headers = init.headers;
-          } else if (input?.headers) {
-            headers = input.headers;
-          }
-
-          if (headers instanceof Headers) {
-            headers = Object.fromEntries(headers.entries());
-          } else {
-            headers = headers || {};
-          }
-
-          postMessage(url, method, headers, requestId);
+          window.webkit.messageHandlers.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              url: url,
+              requestId: makeId(),
+              isForMainFrame: window.self === window.top,
+            })
+          );
         } catch (error) {}
+      }
 
-        return origFetch.apply(this, arguments);
-      };
+      if (window.__interceptionWebViewPatched) return;
+      window.__interceptionWebViewPatched = true;
 
-      window.XMLHttpRequest.prototype.open = function (method, url) {
-        try {
-          this.__url = new URL(url).href;
-        } catch (error) {
-          try {
-            this.__url = new URL(url, window.location.href).href;
-          } catch (error) {
-            this.__url = url;
-          }
-        }
+      try {
+        const extensions = ${JSON.stringify(skipInterceptionForFileExtensions)};
+        const regex = new RegExp('\\.(' + extensions.join('|') + ')($|[?&/=,])');
 
-        this.__method = method;
-        this.__requestId = makeId();
-        this.__headers = {};
-        return origOpen.apply(this, arguments);
-      };
+        new PerformanceObserver(function(list) {
+          list.getEntries().forEach(function(entry) {
+            const url = decodeURL(entry.name);
 
-      window.XMLHttpRequest.prototype.setRequestHeader = function (header, value) {
-        this.__headers = this.__headers || {};
-        this.__headers[header] = value;
-        return origSetRequestHeader.apply(this, arguments);
-      };
-
-      window.XMLHttpRequest.prototype.send = function () {
-        postMessage(this.__url, this.__method, this.__headers, this.__requestId);
-        return origSend.apply(this, arguments);
-      };
-    } catch (error) {}
-  })();
-`;
+            if (!regex.test(url)) {
+              postMessage(url);
+            }
+          });
+        }).observe({ type: 'resource', buffered: true });
+      } catch (error) {}
+    })();
+  `;
+};
 
 export const WebView = memo<GlobalWebViewProps>(
-  ({ ref, injectedJavaScriptBeforeContentLoaded, onInterceptRequest, onMessage, ...props }): ReactNode => {
+  ({
+    ref,
+    skipInterceptionForFileExtensions = SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS,
+    injectedJavaScriptBeforeContentLoaded = '',
+    onInterceptRequest,
+    onMessage,
+    ...props
+  }): ReactNode => {
     const javaScript = useMemo((): string => {
-      return `${JAVA_SCRIPT}${injectedJavaScriptBeforeContentLoaded || ''}`;
-    }, [injectedJavaScriptBeforeContentLoaded]);
+      return `${getJavaScript(skipInterceptionForFileExtensions)}${injectedJavaScriptBeforeContentLoaded}`;
+    }, [injectedJavaScriptBeforeContentLoaded, skipInterceptionForFileExtensions]);
 
     const handleMessage = useCallback(
       (event: WebViewMessageEvent): void => {
         try {
-          const { url, method, headers, requestId, isForMainFrame } = JSON.parse(event.nativeEvent.data);
-          const { href, protocol, host, pathname, hash, search, searchParams } = new URL(decodeURL(url));
+          const { url, requestId, isForMainFrame } = JSON.parse(event.nativeEvent.data);
+          const { href, protocol, host, pathname, hash, search, searchParams } = new URL(url);
 
           onInterceptRequest?.({
             ...event,
@@ -123,11 +83,8 @@ export const WebView = memo<GlobalWebViewProps>(
               host: host,
               path: pathname,
               fragment: hash,
-              method: method,
               requestId: requestId,
               isForMainFrame: isForMainFrame,
-              isRedirect: false,
-              headers: headers,
               query: {
                 raw: search,
                 params: Object.fromEntries(searchParams),

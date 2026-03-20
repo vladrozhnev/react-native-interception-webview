@@ -21,13 +21,8 @@ export type InterceptionEvent = NativeSyntheticEvent<{
   host: string;
   path: string;
   fragment: string;
-  method: string;
   requestId: string;
   isForMainFrame: boolean;
-  isRedirect: boolean;
-  headers: {
-    [key: string]: string | undefined;
-  };
   query: {
     raw: string;
     params: {

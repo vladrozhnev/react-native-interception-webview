@@ -276,11 +276,8 @@ interface NativeProps extends ViewProps {
       host: string;
       path: string;
       fragment: string;
-      method: string;
       requestId: string;
       isForMainFrame: boolean;
-      isRedirect: boolean;
-      headers: Readonly<{}>;
       query: Readonly<{
         raw: string;
         params: Readonly<{}>;
@@ -294,11 +291,8 @@ interface NativeProps extends ViewProps {
       host: string;
       path: string;
       fragment: string;
-      method: string;
       requestId: string;
       isForMainFrame: boolean;
-      isRedirect: boolean;
-      headers: Readonly<{}>;
       query: Readonly<{
         raw: string;
         params: Readonly<{}>;

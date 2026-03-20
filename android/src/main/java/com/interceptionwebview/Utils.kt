@@ -21,10 +21,8 @@ object Utils {
             putString("host", host)
             putString("path", path)
             putString("fragment", fragment)
-            putString("method", request.method.uppercase())
             putString("requestId", requestId)
             putBoolean("isForMainFrame", request.isForMainFrame)
-            putBoolean("isRedirect", request.isRedirect)
 
             val query = Arguments.createMap().apply {
                 val raw = Uri.decode(uri.query.orEmpty())
@@ -45,13 +43,6 @@ object Utils {
                 putMap("params", params)
             }
 
-            val headers = Arguments.createMap().apply {
-                request.requestHeaders.forEach { (key, value) ->
-                    putString(key, value.trim().replace("\\\\", "\\").replace("\\\"", "\""))
-                }
-            }
-
-            putMap("headers", headers)
             putMap("query", query)
         }
 
