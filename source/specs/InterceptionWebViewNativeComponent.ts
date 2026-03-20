@@ -276,6 +276,7 @@ interface NativeProps extends ViewProps {
       host: string;
       path: string;
       fragment: string;
+      method: string;
       requestId: string;
       query: Readonly<{
         raw: string;
@@ -290,6 +291,7 @@ interface NativeProps extends ViewProps {
       host: string;
       path: string;
       fragment: string;
+      method: string;
       requestId: string;
       query: Readonly<{
         raw: string;

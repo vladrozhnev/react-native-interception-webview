@@ -1,7 +1,29 @@
 /** @format */
 
-export const makeId = () => {
-  return Date.now().toString() + '-' + Math.random().toString().slice(2);
+export const makeId = (): string => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char: string): string => {
+    const randomHex = (Math.random() * 16) | 0;
+    const value = char === 'x' ? randomHex : (randomHex & 0x3) | 0x8;
+    return value.toString(16);
+  });
+};
+
+export const getInterceptionEventData = (url: string): GlobalInterceptionEvent => {
+  const data = new URL(url);
+
+  return {
+    url: data.href,
+    scheme: data.protocol.replace(':', ''),
+    host: data.host,
+    path: data.pathname,
+    fragment: data.hash,
+    method: 'GET',
+    requestId: makeId(),
+    query: {
+      raw: data.search,
+      params: Object.fromEntries(data.searchParams),
+    },
+  };
 };
 
 export const getJavaScript = (skipInterceptionForFileExtensions: string[]): string => {
@@ -16,19 +38,9 @@ export const getJavaScript = (skipInterceptionForFileExtensions: string[]): stri
         return containsEncodedComponents(decodedURL) ? decodeURL(decodedURL) : decodedURL;
       }
 
-      function makeId() {
-        return Date.now().toString() + '-' + Math.random().toString().slice(2);
-      }
-
       function postMessage(url) {
         try {
-          window.webkit.messageHandlers.ReactNativeWebView.postMessage(
-            JSON.stringify({
-              url: url,
-              requestId: makeId(),
-              isForMainFrame: window.self === window.top,
-            })
-          );
+          window.webkit.messageHandlers.ReactNativeWebView.postMessage(url);
         } catch (error) {}
       }
 

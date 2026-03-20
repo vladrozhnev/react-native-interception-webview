@@ -21,6 +21,7 @@ object Utils {
             putString("host", host)
             putString("path", path)
             putString("fragment", fragment)
+            putString("method", request.method.uppercase())
             putString("requestId", requestId)
 
             val query = Arguments.createMap().apply {

@@ -20,6 +20,7 @@ export type InterceptionEvent = {
   host: string;
   path: string;
   fragment: string;
+  method: string;
   requestId: string;
   query: {
     raw: string;
