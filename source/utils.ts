@@ -13,8 +13,8 @@ export const makeId = (): string => {
 export const getFilteredInterceptionEventData = (
   event: NativeSyntheticEvent<GlobalInterceptionEvent>,
 ): GlobalInterceptionEvent => {
-  const { url, scheme, host, path, fragment, method, requestId, query } = event.nativeEvent;
-  return { url, scheme, host, path, fragment, method, requestId, query };
+  const { url, scheme, host, path, fragment, query, method, requestId } = event.nativeEvent;
+  return { url, scheme, host, path, fragment, query, method, requestId };
 };
 
 export const getInterceptionEventData = (url: string): GlobalInterceptionEvent => {
@@ -26,9 +26,9 @@ export const getInterceptionEventData = (url: string): GlobalInterceptionEvent =
     host: data.host,
     path: data.pathname,
     fragment: data.hash,
+    query: data.search,
     method: 'GET',
     requestId: makeId(),
-    query: data.search,
   };
 };
 
