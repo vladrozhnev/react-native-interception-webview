@@ -42,7 +42,7 @@ export const getJavaScript = (skipInterceptionForFileExtensions: string[]): stri
         return decodeURI(url) !== decodeURIComponent(url);
       }
 
-      function decodeURL(url = '') {
+      function decodeURL(url) {
         const decodedURL = decodeURIComponent(url);
         return containsEncodedComponents(decodedURL) ? decodeURL(decodedURL) : decodedURL;
       }
