@@ -47,7 +47,7 @@ export const getJavaScript = (skipInterceptionForFileExtensions: string[]): stri
               postMessage(url);
             }
           });
-        }).observe({ type: 'resource', buffered: true });
+        }).observe({ entryTypes: ['navigation', 'resource'], buffered: true });
       } catch (error) {}
     })();
   `;
