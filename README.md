@@ -49,8 +49,9 @@ const onShouldInterruptRequest = (event) => {
     host,
     path,
     fragment,
-    requestId,
-    query
+    method,
+    query,
+    requestId
   } = event;
 
   if (url === 'https://example.com') {
@@ -74,8 +75,9 @@ const onInterceptRequest = (event) => {
     host,
     path,
     fragment,
+    method,
+    query,
     requestId,
-    query
   } = event;
 
   if (url === 'https://example.com') {
