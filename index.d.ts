@@ -1,7 +1,6 @@
 /** @format */
 
 import type { Component, NamedExoticComponent, Ref } from 'react';
-import type { NativeSyntheticEvent } from 'react-native';
 import type { WebView as CommunityWebView, WebViewProps as CommunityWebViewProps } from 'react-native-webview';
 
 export type WebViewMethods = Omit<
@@ -15,21 +14,20 @@ export type WebViewMethods = Omit<
   keyof Component<any>
 >;
 
-export type InterceptionEvent = NativeSyntheticEvent<{
+export type InterceptionEvent = {
   url: string;
   scheme: string;
   host: string;
   path: string;
   fragment: string;
   requestId: string;
-  isForMainFrame: boolean;
   query: {
     raw: string;
     params: {
       [key: string]: string | string[] | undefined;
     };
   };
-}>;
+};
 
 export type WebViewProps = Omit<
   CommunityWebViewProps,

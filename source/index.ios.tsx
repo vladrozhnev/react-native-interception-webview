@@ -3,64 +3,17 @@
 import { memo, useCallback, useMemo } from 'react';
 import { WebView as CommunityWebView } from 'react-native-webview';
 import type { ReactNode, Ref } from 'react';
-import type { WebViewMessageEvent } from 'react-native-webview';
+import type { WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
 
+import { getJavaScript, makeId } from './utils';
 import { SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS } from './constants';
-
-const getJavaScript = (skipInterceptionForFileExtensions: string[]): string => {
-  return `
-    (function () {
-      function containsEncodedComponents(url) {
-        return decodeURI(url) !== decodeURIComponent(url);
-      }
-
-      function decodeURL(url = '') {
-        const decodedURL = decodeURIComponent(url);
-        return containsEncodedComponents(decodedURL) ? decodeURL(decodedURL) : decodedURL;
-      }
-
-      function makeId() {
-        return Date.now().toString() + '-' + Math.random().toString().slice(2);
-      }
-
-      function postMessage(url) {
-        try {
-          window.webkit.messageHandlers.ReactNativeWebView.postMessage(
-            JSON.stringify({
-              url: url,
-              requestId: makeId(),
-              isForMainFrame: window.self === window.top,
-            })
-          );
-        } catch (error) {}
-      }
-
-      if (window.__interceptionWebViewPatched) return;
-      window.__interceptionWebViewPatched = true;
-
-      try {
-        const extensions = ${JSON.stringify(skipInterceptionForFileExtensions)};
-        const regex = new RegExp('\\.(' + extensions.join('|') + ')($|[?&/=,])');
-
-        new PerformanceObserver(function(list) {
-          list.getEntries().forEach(function(entry) {
-            const url = decodeURL(entry.name);
-
-            if (!regex.test(url)) {
-              postMessage(url);
-            }
-          });
-        }).observe({ entryTypes: ['resource', 'navigation'], buffered: true });
-      } catch (error) {}
-    })();
-  `;
-};
 
 export const WebView = memo<GlobalWebViewProps>(
   ({
     ref,
     skipInterceptionForFileExtensions = SKIP_INTERCEPTION_FOR_FILE_EXTENSIONS,
     injectedJavaScriptBeforeContentLoaded = '',
+    onNavigationStateChange,
     onInterceptRequest,
     onMessage,
     ...props
@@ -69,34 +22,49 @@ export const WebView = memo<GlobalWebViewProps>(
       return `${getJavaScript(skipInterceptionForFileExtensions)}${injectedJavaScriptBeforeContentLoaded}`;
     }, [injectedJavaScriptBeforeContentLoaded, skipInterceptionForFileExtensions]);
 
+    const getInterceptionEventData = useCallback((url: string, requestId: string): GlobalInterceptionEvent => {
+      const { href, protocol, host, pathname, hash, search, searchParams } = new URL(url);
+
+      return {
+        url: href,
+        scheme: protocol.replace(':', ''),
+        host: host,
+        path: pathname,
+        fragment: hash,
+        requestId: requestId,
+        query: {
+          raw: search,
+          params: Object.fromEntries(searchParams),
+        },
+      };
+    }, []);
+
     const handleMessage = useCallback(
       (event: WebViewMessageEvent): void => {
         try {
-          const { url, requestId, isForMainFrame } = JSON.parse(event.nativeEvent.data);
-          const { href, protocol, host, pathname, hash, search, searchParams } = new URL(url);
+          const { url, requestId } = JSON.parse(event.nativeEvent.data);
+          const data = getInterceptionEventData(url, requestId);
 
-          onInterceptRequest?.({
-            ...event,
-            nativeEvent: {
-              url: href,
-              scheme: protocol.replace(':', ''),
-              host: host,
-              path: pathname,
-              fragment: hash,
-              requestId: requestId,
-              isForMainFrame: isForMainFrame,
-              query: {
-                raw: search,
-                params: Object.fromEntries(searchParams),
-              },
-            },
-          });
+          onInterceptRequest?.(data);
         } catch {
         } finally {
           onMessage?.(event);
         }
       },
-      [onInterceptRequest, onMessage],
+      [getInterceptionEventData, onInterceptRequest, onMessage],
+    );
+
+    const handleNavigationStateChange = useCallback(
+      (event: WebViewNavigation): void => {
+        try {
+          const data = getInterceptionEventData(event.url, makeId());
+          onInterceptRequest?.(data);
+        } catch {
+        } finally {
+          onNavigationStateChange?.(event);
+        }
+      },
+      [getInterceptionEventData, onInterceptRequest, onNavigationStateChange],
     );
 
     return (
@@ -104,6 +72,7 @@ export const WebView = memo<GlobalWebViewProps>(
         {...props}
         ref={ref as Ref<CommunityWebView>}
         injectedJavaScriptBeforeContentLoaded={javaScript}
+        onNavigationStateChange={handleNavigationStateChange}
         injectedJavaScriptBeforeContentLoadedForMainFrameOnly={false}
         onMessage={handleMessage}
       />

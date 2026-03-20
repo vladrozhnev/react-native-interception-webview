@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useMemo } from 'react';
 import { WebView as CommunityWebView } from 'react-native-webview';
+import type { NativeSyntheticEvent } from 'react-native';
 import type { ReactNode, Ref } from 'react';
 import type { WebViewNativeConfig } from 'react-native-webview/lib/WebViewTypes';
 
@@ -19,15 +20,15 @@ export const WebView = memo<GlobalWebViewProps>(
     ...props
   }): ReactNode => {
     const handleInterceptRequest = useCallback(
-      (event: GlobalInterceptionEvent): void => {
-        onInterceptRequest?.(event);
+      (event: NativeSyntheticEvent<GlobalInterceptionEvent>): void => {
+        onInterceptRequest?.(event.nativeEvent);
       },
       [onInterceptRequest],
     );
 
     const handleShouldInterruptRequest = useCallback(
-      (event: GlobalInterceptionEvent): void => {
-        const interrupt = !!onShouldInterruptRequest?.(event);
+      (event: NativeSyntheticEvent<GlobalInterceptionEvent>): void => {
+        const interrupt = !!onShouldInterruptRequest?.(event.nativeEvent);
         NativeInterceptionWebViewModule.setRequestAllowed(event.nativeEvent.requestId, !interrupt);
       },
       [onShouldInterruptRequest],

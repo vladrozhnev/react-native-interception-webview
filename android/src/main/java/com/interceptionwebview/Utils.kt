@@ -22,7 +22,6 @@ object Utils {
             putString("path", path)
             putString("fragment", fragment)
             putString("requestId", requestId)
-            putBoolean("isForMainFrame", request.isForMainFrame)
 
             val query = Arguments.createMap().apply {
                 val raw = Uri.decode(uri.query.orEmpty())
