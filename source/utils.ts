@@ -53,7 +53,10 @@ export const getJavaScript = (skipInterceptionForFileExtensions: string[]): stri
         } catch (error) {}
       }
 
-      if (window.__interceptionWebViewPatched) return;
+      if (window.__interceptionWebViewPatched) {
+        return;
+      };
+
       window.__interceptionWebViewPatched = true;
 
       try {
