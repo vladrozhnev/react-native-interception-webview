@@ -50,7 +50,7 @@ const getJavaScript = (skipInterceptionForFileExtensions: string[]): string => {
               postMessage(url);
             }
           });
-        }).observe({ type: 'resource', buffered: true });
+        }).observe({ entryTypes: ['resource', 'navigation'], buffered: true });
       } catch (error) {}
     })();
   `;
